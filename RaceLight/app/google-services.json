@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "512122836988",
+    "firebase_url": "https://racelight-34e47.firebaseio.com",
+    "project_id": "racelight-34e47",
+    "storage_bucket": "racelight-34e47.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:512122836988:android:29abc693f16d565f640479",
+        "android_client_info": {
+          "package_name": "com.example.racelight"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "512122836988-4idj67u60o8id7equ6cof9nj97k1q3b7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.racelight",
+            "certificate_hash": "40a93aea91dd31704ad244981ee69518f1012846"
+          }
+        },
+        {
+          "client_id": "512122836988-0ios4jvk3vk8n0ovserk5t1h3lt6pn9l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAoDTe_CXTxxGARVPLntcfWAEWcLktMqrk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "512122836988-0ios4jvk3vk8n0ovserk5t1h3lt6pn9l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
