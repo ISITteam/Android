@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.start_page.*
+import java.util.*
 
 class StartActivity: AppCompatActivity(), SensorEventListener {
     //10 is a pretty vigorous shake, 5 is a little softer than i think i'd like,  3 might still randomly trigger.
@@ -51,6 +52,7 @@ class StartActivity: AppCompatActivity(), SensorEventListener {
             sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION),
             SensorManager.SENSOR_DELAY_NORMAL
         )
+
         launchButton.setOnClickListener{
             driverTest()
         }
@@ -60,12 +62,16 @@ class StartActivity: AppCompatActivity(), SensorEventListener {
 
         val driverName = "Bobby"
 
-        val ref = FirebaseDatabase.getInstance().getReference("test")
+        val reactTime = .2
+
+        val dateTime = Date()
+
+        val ref = FirebaseDatabase.getInstance().getReference("Drivers")
 
         val dataID = ref.push().key
 
 
-        val driver = DriverTest(dataID, driverName)
+        val driver = DriverModel(dataID, driverName, reactTime, dateTime)
 
         //error occurred needed !! on dataID because of string, string ? mismatch
         ref.child(dataID!!).setValue(driver).addOnCompleteListener{
