@@ -2,4 +2,8 @@
     <string name="app_name">RaceLight</string>
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
+    <string name="username">Name</string>
+    <string name="back">Home</string>
+    <string name="launch">Launch</string>
+    <string name="ranking">Show Rankings</string>
 </resources>

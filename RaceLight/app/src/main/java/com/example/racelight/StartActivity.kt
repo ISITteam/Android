@@ -39,6 +39,7 @@ class StartActivity: AppCompatActivity(), SensorEventListener, UsernameDialogFra
     var difference by Delegates.notNull<Long>();
     lateinit var reactionTime: String;
     var success: Boolean = false;
+    var sensorSwitch:Boolean = false
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
 
@@ -51,17 +52,18 @@ class StartActivity: AppCompatActivity(), SensorEventListener, UsernameDialogFra
                 event!!.values[2]
             ) > shakeThreshold
         ) {
-
+            /* need a flag to not keep changing the sensor */
 
             if (!countdown) {
-
+                if(!sensorSwitch){
                 val sensorTime = System.currentTimeMillis()
                 difference = sensorTime - clickTime /*reaction time in milliseconds*/
                 val remainder = difference % 1000
                 val seconds = difference / 1000
                 reactionTime = seconds.toString() + "." + remainder.toString()
                 Countdown.text = "Reaction Time:" + reactionTime + " seconds"
-
+                }
+                sensorSwitch = true;
                 sendButton.visibility = View.VISIBLE
                 launchButton.visibility = View.VISIBLE
                 launchButton.isClickable = true;
@@ -83,6 +85,7 @@ class StartActivity: AppCompatActivity(), SensorEventListener, UsernameDialogFra
         )
 
         launchButton.setOnClickListener {
+            sensorSwitch = false;
             launchButton.isClickable = false
             launchButton.visibility = View.INVISIBLE
             Countdown.visibility = View.VISIBLE
@@ -209,10 +212,16 @@ class StartActivity: AppCompatActivity(), SensorEventListener, UsernameDialogFra
         //error occurred needed !! on dataID because of string, string ? mismatch
       //applicationContext is causing errors
 
+
+/*
+* need a way to confirm a successful firebase post; Return true if it works, false if it doesn't
+* */
+    /* Wait for Firebase call.  */
         ref.child(dataID!!).setValue(driver).addOnCompleteListener{
              //some kind of flag here.
+
         }
-        return true;
+    return true;
 
     }
 
