@@ -2,6 +2,7 @@ package com.example.racelight
 import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -37,7 +38,7 @@ class StartActivity: AppCompatActivity(), SensorEventListener, UsernameDialogFra
     var usernameToSave: String = "test";
     var difference by Delegates.notNull<Long>();
     lateinit var reactionTime: String;
-
+    var success: Boolean = false;
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
 
@@ -100,6 +101,11 @@ class StartActivity: AppCompatActivity(), SensorEventListener, UsernameDialogFra
             }.start()
         }
 
+        backButton.setOnClickListener {
+            startActivity(Intent(this, MainActivity :: class.java))
+
+
+        }
 
 
 
@@ -115,10 +121,17 @@ class StartActivity: AppCompatActivity(), SensorEventListener, UsernameDialogFra
     override fun onDialogPositiveClick(dialog: DialogFragment, newName: String) {
         Countdown.text = newName
         //difference is in milliseconds
-        //seconds is a float, 'second.miliseconds'
-        driverTest(newName, difference)
-        Countdown.text = "success"
-        dialog.dismiss();
+        //seconds is a string.. intended for float?, 'second.miliseconds'
+       var success:Boolean =  driverTest(newName, difference)
+
+        if(success){
+            intent = Intent(this, RankingsActivity::class.java)
+            startActivity(intent)
+        }
+        else{
+            Countdown.text= "oops. Something went wrong"
+        }
+
     }
 
 
@@ -179,7 +192,8 @@ class StartActivity: AppCompatActivity(), SensorEventListener, UsernameDialogFra
 
     }
 
-    private fun driverTest(name: String,reactTime:Long ){
+//returns true if successful
+    private fun driverTest(name: String,reactTime:Long ): Boolean {
 
 
 
@@ -196,15 +210,9 @@ class StartActivity: AppCompatActivity(), SensorEventListener, UsernameDialogFra
       //applicationContext is causing errors
 
         ref.child(dataID!!).setValue(driver).addOnCompleteListener{
-            /*Toast.makeText(
-               applicationContext,
-                "Driver Saved",
-                Toast.LENGTH_LONG
-            ).show()
-*/
-
+             //some kind of flag here.
         }
-
+        return true;
 
     }
 
