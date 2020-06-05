@@ -60,9 +60,9 @@ class StartActivity: AppCompatActivity(), SensorEventListener {
 
     private fun driverTest(){
 
-        val driverName = "Bobby"
+        val driverName = "Bailey"
 
-        val reactTime = .2
+        val reactTime = .1243
 
         val dateTime = Date()
 
@@ -72,6 +72,11 @@ class StartActivity: AppCompatActivity(), SensorEventListener {
 
 
         val driver = DriverModel(dataID, driverName, reactTime, dateTime)
+
+        //for rankings
+        /*val rankingRef = FirebaseDatabase.getInstance().getReference("Rankings")
+        val rankingRecrd = RankingsModel(driver.id, reactTime)
+        rankingRef.child(dataID!!).setValue(rankingRecrd)*/
 
         //error occurred needed !! on dataID because of string, string ? mismatch
         ref.child(dataID!!).setValue(driver).addOnCompleteListener{
