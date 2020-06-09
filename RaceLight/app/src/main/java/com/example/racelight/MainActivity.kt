@@ -30,6 +30,11 @@ class MainActivity : AppCompatActivity() {
 
         }
 
+        animateButton.setOnClickListener {
+            startActivity(Intent(this, AnimateActivity :: class.java))
+
+        }
+
     }
 
 

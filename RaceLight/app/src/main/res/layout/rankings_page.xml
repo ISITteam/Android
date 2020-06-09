@@ -10,7 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Show Rankings"
-        app:layout_constraintBottom_toTopOf="@+id/rankingsText"
+        app:layout_constraintBottom_toTopOf="@+id/driverText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -18,12 +18,24 @@
 
     <TextView
         android:id="@+id/rankingsText"
-        android:layout_width="301dp"
-        android:layout_height="431dp"
-        android:text="Rankings"
+        android:layout_width="278dp"
+        android:layout_height="326dp"
+        android:text='Click "SHOW RANKINGS" to Display'
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/driverText" />
+
+    <TextView
+        android:id="@+id/driverText"
+        android:layout_width="274dp"
+        android:layout_height="107dp"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/rankingsText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"

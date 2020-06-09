@@ -11,6 +11,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.start_page.*
+import java.io.File
+import java.io.FileOutputStream
+import java.lang.Exception
 import java.util.*
 
 class StartActivity: AppCompatActivity(), SensorEventListener {
@@ -73,15 +76,34 @@ class StartActivity: AppCompatActivity(), SensorEventListener {
 
         val driver = DriverModel(dataID, driverName, reactTime, dateTime)
 
-        //for rankings
-        /*val rankingRef = FirebaseDatabase.getInstance().getReference("Rankings")
-        val rankingRecrd = RankingsModel(driver.id, reactTime)
-        rankingRef.child(dataID!!).setValue(rankingRecrd)*/
-
         //error occurred needed !! on dataID because of string, string ? mismatch
         ref.child(dataID!!).setValue(driver).addOnCompleteListener{
             Toast.makeText(applicationContext, "Driver Saved", Toast.LENGTH_LONG).show()
+            writeToLocalFile(driverName, reactTime)
         }
+    }
+
+    private fun writeToLocalFile(driverName: String, reactTime: Double){
+        try{
+            val fileName = "driverText.txt"
+            val content = driverMessage(driverName, reactTime)
+            applicationContext.openFileOutput(fileName, Context.MODE_PRIVATE).use{
+                it.write(content.toByteArray())
+            }
+            /*val textFromLocal: String = File(file).bufferedWriter().use{
+                out -> out.write(driverMessage(driverName, reactTime))
+            }*/
+        }
+        catch(e: Exception){
+
+        }
+    }
+
+    private fun driverMessage(name: String, time: Double): String{
+        val driverTextChain = StringBuilder()
+        driverTextChain.append("Hi ").append(name).append(',').append('\n')
+        driverTextChain.append("Here is your response time: ").append(time).append(" seconds.")
+        return driverTextChain.toString()
     }
 
 

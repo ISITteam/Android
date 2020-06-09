@@ -1,11 +1,15 @@
 package com.example.racelight
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.rankings_page.*
 import org.xmlpull.v1.sax2.Driver
+import java.io.BufferedReader
+import java.io.File
+import java.io.InputStreamReader
 import java.lang.StringBuilder
 
 class RankingsActivity: AppCompatActivity() {
@@ -13,8 +17,39 @@ class RankingsActivity: AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.rankings_page)
         showRanksButton.setOnClickListener {
-            //need to implement
+            readLocalData()
             pullData()
+        }
+    }
+
+    private fun readLocalData(){
+       /* val file = "driver.txt"
+        val textFromLocal: String = application.assets.open(file).bufferedReader().use{
+            it.readText()
+        }*/
+        //val filePath = "src/resources/driverFile.txt"
+        //val driverFile = File(filePath)
+        val fileName = "driverText.txt"
+        val fileInput = applicationContext.openFileInput(fileName)
+        val bufferedReader = BufferedReader(InputStreamReader(fileInput))
+        val localStrBuilder = StringBuilder()
+        var text: String? = null
+
+        while({text = bufferedReader.readLine(); text}() != null){
+            localStrBuilder.append(text)
+        }
+        //val textFromLocal:String = applicationContext.openFileInput(fileName).read().toString(Charsets.UTF_8)
+        val textFromLocal = localStrBuilder.toString()
+        if(textFromLocal.isNotEmpty()){
+            driverText.text = textFromLocal
+        }
+        //test for empty file
+        /*if(textFromLocal.isEmpty()){
+            driverText.text = "I'm Empty!"
+        }*/
+
+        applicationContext.openFileOutput(fileName, Context.MODE_PRIVATE).use{
+            it.write(("").toByteArray())
         }
     }
 
@@ -42,14 +77,6 @@ class RankingsActivity: AppCompatActivity() {
                         textList.append(driver.name).append(" ").append(reactionTime)
                         textList.append('\n')
                     }
-
-                    /*for(driver in driverList){
-
-                        textList.append(driver.name)
-                        textList.append('\n')
-                        textList.append(driver.reactionTime.toString())
-                        textList.append('\n')
-                    }*/
 
                     rankingsText.text = textList.toString()
                 }
