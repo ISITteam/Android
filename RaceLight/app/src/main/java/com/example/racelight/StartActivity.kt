@@ -1,5 +1,8 @@
 package com.example.racelight
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
+import android.animation.PropertyValuesHolder
 import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
@@ -25,12 +28,18 @@ import java.util.*
 import kotlin.properties.Delegates
 
 import android.graphics.Color
+import android.widget.ImageView
 import kotlinx.android.synthetic.main.start_page.*
 import java.util.*
 
 
 class StartActivity : AppCompatActivity(), SensorEventListener,
     UsernameDialogFragment.UsernameInterfaceListener {
+    lateinit var countdownThree: ImageView
+    lateinit var countdownTwo: ImageView
+    lateinit var countdownOne: ImageView
+    lateinit var countdownGo: ImageView
+
     //10 is a pretty vigorous shake, 5 is a little softer than i think i'd like,  3 might still randomly trigger.
     private var shakeThreshold = 7;
 
@@ -86,12 +95,20 @@ class StartActivity : AppCompatActivity(), SensorEventListener,
             SensorManager.SENSOR_DELAY_NORMAL
         )
 
+        countdownThree = findViewById<ImageView>(R.id.three)
+        countdownTwo = findViewById<ImageView>(R.id.two)
+        countdownOne = findViewById<ImageView>(R.id.one)
+        countdownGo = findViewById<ImageView>(R.id.go)
+
         launchButton.setOnClickListener {
-            sensorSwitch = false;
+            startAnimation()
+
+
+            /*sensorSwitch = false;
             launchButton.isClickable = false
             launchButton.visibility = View.INVISIBLE
             Countdown.visibility = View.VISIBLE
-            /*countdown goes: 3,2,1,GO!*/
+            *//*countdown goes: 3,2,1,GO!*//*
             object : CountDownTimer(3000, 1000) {
                 override fun onTick(millisUntilFinished: Long) {
                     Countdown.text = "seconds remaining: " + ((millisUntilFinished / 1000) + 1)
@@ -103,7 +120,7 @@ class StartActivity : AppCompatActivity(), SensorEventListener,
                     countdown = false
                 }
 
-            }.start()
+            }.start()*/
         }
 
         backButton.setOnClickListener {
@@ -123,10 +140,68 @@ class StartActivity : AppCompatActivity(), SensorEventListener,
         })
     }
 
+    private fun startAnimation(){
+        sensorSwitch = false;
+        launchButton.isClickable = false
+        launchButton.visibility = View.INVISIBLE
+        Countdown.visibility = View.VISIBLE
+        countdownThree.alpha = 1f
+
+        val scaleX = PropertyValuesHolder.ofFloat(View.SCALE_X, .1f)
+        val scaleY = PropertyValuesHolder.ofFloat(View.SCALE_Y, .1f)
+
+        val goX = PropertyValuesHolder.ofFloat(View.SCALE_X, 2f)
+        val goY = PropertyValuesHolder.ofFloat(View.SCALE_Y, 2f)
+
+        val a3One = ObjectAnimator.ofPropertyValuesHolder(countdownThree, scaleX, scaleY)
+        a3One.setDuration(700)
+        //animator.start()
+        val a3Two = ObjectAnimator.ofFloat(countdownThree, View.ALPHA, 0f)
+        a3Two.setDuration(200)
+        val a3Three = ObjectAnimator.ofFloat(countdownTwo, View.ALPHA, 1f)
+        a3Three.setDuration(50)
+
+        val a2One = ObjectAnimator.ofPropertyValuesHolder(countdownTwo, scaleX, scaleY)
+        a2One.setDuration(700)
+        val a2Two = ObjectAnimator.ofFloat(countdownTwo, View.ALPHA, 0f)
+        a2Two.setDuration(200)
+        val a2Three = ObjectAnimator.ofFloat(countdownOne, View.ALPHA, 1f)
+        a3Three.setDuration(50)
+
+        val a1One = ObjectAnimator.ofPropertyValuesHolder(countdownOne, scaleX, scaleY)
+        a1One.setDuration(700)
+        val a1Two = ObjectAnimator.ofFloat(countdownOne, View.ALPHA, 0f)
+        a1Two.setDuration(200)
+        val a1Three = ObjectAnimator.ofFloat(countdownGo, View.ALPHA, 1f)
+        a1Three.setDuration(50)
+
+        val go = ObjectAnimator.ofPropertyValuesHolder(countdownGo, goX, goY)
+        go.setDuration(50)
+        val end = ObjectAnimator.ofFloat(countdownGo, View.ALPHA, 0f)
+
+        val animatorMaster = AnimatorSet()
+        animatorMaster.playSequentially(a3One, a3Two, a3Three, a2One, a2Two, a2Three, a1One, a1Two, a1Three, go, end)
+        animatorMaster.start()
+
+        /*countdown goes: 3,2,1,GO!*/
+        object : CountDownTimer(3000, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                //Countdown.text = "seconds remaining: " + ((millisUntilFinished / 1000) + 1)
+            }
+
+            override fun onFinish() {
+                //Countdown.text = "GO!"
+                clickTime = System.currentTimeMillis()
+                countdown = false
+            }
+
+        }.start()
+    }
+
 
 
     override fun onDialogPositiveClick(dialog: DialogFragment, newName: String) {
-        Countdown.text = newName
+        //Countdown.text = newName
         //difference is in milliseconds
         //seconds is a string.. intended for float?, 'second.miliseconds'
         var success: Boolean = driverTest(newName, difference)
