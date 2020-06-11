@@ -1,4 +1,5 @@
 package com.example.racelight
+
 import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
@@ -28,7 +29,8 @@ import kotlinx.android.synthetic.main.start_page.*
 import java.util.*
 
 
-class StartActivity: AppCompatActivity(), SensorEventListener, UsernameDialogFragment.UsernameInterfaceListener {
+class StartActivity : AppCompatActivity(), SensorEventListener,
+    UsernameDialogFragment.UsernameInterfaceListener {
     //10 is a pretty vigorous shake, 5 is a little softer than i think i'd like,  3 might still randomly trigger.
     private var shakeThreshold = 7;
 
@@ -39,7 +41,7 @@ class StartActivity: AppCompatActivity(), SensorEventListener, UsernameDialogFra
     var difference by Delegates.notNull<Long>();
     lateinit var reactionTime: String;
     var success: Boolean = false;
-    var sensorSwitch:Boolean = false
+    var sensorSwitch: Boolean = false
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
 
@@ -55,13 +57,13 @@ class StartActivity: AppCompatActivity(), SensorEventListener, UsernameDialogFra
             /* need a flag to not keep changing the sensor */
 
             if (!countdown) {
-                if(!sensorSwitch){
-                val sensorTime = System.currentTimeMillis()
-                difference = sensorTime - clickTime /*reaction time in milliseconds*/
-                val remainder = difference % 1000
-                val seconds = difference / 1000
-                reactionTime = seconds.toString() + "." + remainder.toString()
-                Countdown.text = "Reaction Time:" + reactionTime + " seconds"
+                if (!sensorSwitch) {
+                    val sensorTime = System.currentTimeMillis()
+                    difference = sensorTime - clickTime /*reaction time in milliseconds*/
+                    val remainder = difference % 1000
+                    val seconds = difference / 1000
+                    reactionTime = seconds.toString() + "." + remainder.toString()
+                    Countdown.text = "Reaction Time:" + reactionTime + " seconds"
                 }
                 sensorSwitch = true;
                 sendButton.visibility = View.VISIBLE
@@ -105,7 +107,7 @@ class StartActivity: AppCompatActivity(), SensorEventListener, UsernameDialogFra
         }
 
         backButton.setOnClickListener {
-            startActivity(Intent(this, MainActivity :: class.java))
+            startActivity(Intent(this, MainActivity::class.java))
 
 
         }
@@ -121,18 +123,20 @@ class StartActivity: AppCompatActivity(), SensorEventListener, UsernameDialogFra
         })
     }
 
+
+
     override fun onDialogPositiveClick(dialog: DialogFragment, newName: String) {
         Countdown.text = newName
         //difference is in milliseconds
         //seconds is a string.. intended for float?, 'second.miliseconds'
-       var success:Boolean =  driverTest(newName, difference)
+        var success: Boolean = driverTest(newName, difference)
 
-        if(success){
+        if (success) {
+
             intent = Intent(this, RankingsActivity::class.java)
             startActivity(intent)
-        }
-        else{
-            Countdown.text= "oops. Something went wrong"
+        } else {
+            Countdown.text = "oops. Something went wrong"
         }
 
     }
@@ -142,62 +146,8 @@ class StartActivity: AppCompatActivity(), SensorEventListener, UsernameDialogFra
 
     }
 
-}
-
-    class UsernameDialogFragment : DialogFragment() {
-        override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-            return activity?.let {
-                val builder = AlertDialog.Builder(it)
-                // Get the layout inflater
-                val inflater = requireActivity().layoutInflater;
-
-                // Inflate and set the layout for the dialog
-                // Pass null as the parent view because its going in the dialog layout
-                builder.setView(inflater.inflate(com.example.racelight.R.layout.username, null))
-                    // Add action buttons
-                    .setPositiveButton(
-                        save,
-                        DialogInterface.OnClickListener { dialog ,id ->
-
-                            listener.onDialogPositiveClick(this, this.dialog?.newUsername?.text.toString())
-                        })
-                    .setNegativeButton(cancel,
-                        DialogInterface.OnClickListener { dialog, id ->
-                            listener.onDialogNegativeClick(this, this.dialog?.newUsername?.text.toString())
-                        })
-                builder.create()
-            } ?: throw IllegalStateException("Activity cannot be null")
-        }
-
-        // Use this instance of the interface to deliver action events
-        internal lateinit var listener: UsernameInterfaceListener
-
-        /* The activity that creates an instance of this dialog fragment must
-         * implement this interface in order to receive event callbacks.
-         * Each method passes the DialogFragment in case the host needs to query it. */
-        interface UsernameInterfaceListener {
-
-            fun onDialogPositiveClick(dialog: DialogFragment, newName:String)
-            fun onDialogNegativeClick(dialog: DialogFragment, newName: String)
-        }
-        override fun onAttach(context: Context) {
-            super.onAttach(context)
-            // Verify that the host activity implements the callback interface
-            try {
-                // Instantiate the NoticeDialogListener so we can send events to the host
-                listener = context as UsernameInterfaceListener
-            } catch (e: ClassCastException) {
-                // The activity doesn't implement the interface, throw exception
-                throw ClassCastException((context.toString() +
-                        " must implement NoticeDialogListener"))
-            }
-        }
-
-    }
-
-//returns true if successful
-    private fun driverTest(name: String,reactTime:Long ): Boolean {
-
+    //returns true if successful
+    private fun driverTest(name: String, reactTime: Long): Boolean {
 
 
         val dateTime = Date()
@@ -210,19 +160,110 @@ class StartActivity: AppCompatActivity(), SensorEventListener, UsernameDialogFra
         val driver = DriverModel(dataID, name, reactTime, dateTime)
 
         //error occurred needed !! on dataID because of string, string ? mismatch
-      //applicationContext is causing errors
+        //applicationContext is causing errors
 
 
 /*
 * need a way to confirm a successful firebase post; Return true if it works, false if it doesn't
 * */
-    /* Wait for Firebase call.  */
-        ref.child(dataID!!).setValue(driver).addOnCompleteListener{
-             //some kind of flag here.
-
+        /* Wait for Firebase call.  */
+        ref.child(dataID!!).setValue(driver).addOnCompleteListener {
+            //some kind of flag here.
+            writeToLocalFile(name, reactTime)
         }
-    return true;
+        return true;
 
     }
+
+    private fun writeToLocalFile(driverName: String, reactTime: Long) {
+        try {
+            val fileName = "driverText.txt"
+            val content = driverMessage(driverName, reactTime)
+            applicationContext.openFileOutput(fileName, Context.MODE_PRIVATE).use {
+                it.write(content.toByteArray())
+            }
+            /*val textFromLocal: String = File(file).bufferedWriter().use{
+                out -> out.write(driverMessage(driverName, reactTime))
+            }*/
+        } catch (e: Exception) {
+
+        }
+    }
+
+    private fun driverMessage(name: String, time: Long): String {
+        val seconds = time / 1000
+        val miliseconds = time % 1000
+        val reactionTime = "${seconds.toString() + "." + miliseconds.toString()}"
+        val driverTextChain = StringBuilder()
+        driverTextChain.append("Hi ").append(name).append(',').append('\n')
+        driverTextChain.append("Here is your response time: ").append(reactionTime).append(" seconds.")
+        return driverTextChain.toString()
+    }
+
+
+
+}
+
+class UsernameDialogFragment : DialogFragment() {
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        return activity?.let {
+            val builder = AlertDialog.Builder(it)
+            // Get the layout inflater
+            val inflater = requireActivity().layoutInflater;
+
+            // Inflate and set the layout for the dialog
+            // Pass null as the parent view because its going in the dialog layout
+            builder.setView(inflater.inflate(com.example.racelight.R.layout.username, null))
+                // Add action buttons
+                .setPositiveButton(
+                    save,
+                    DialogInterface.OnClickListener { dialog, id ->
+
+                        listener.onDialogPositiveClick(
+                            this,
+                            this.dialog?.newUsername?.text.toString()
+                        )
+                    })
+                .setNegativeButton(cancel,
+                    DialogInterface.OnClickListener { dialog, id ->
+                        listener.onDialogNegativeClick(
+                            this,
+                            this.dialog?.newUsername?.text.toString()
+                        )
+                    })
+            builder.create()
+        } ?: throw IllegalStateException("Activity cannot be null")
+    }
+
+    // Use this instance of the interface to deliver action events
+    internal lateinit var listener: UsernameInterfaceListener
+
+    /* The activity that creates an instance of this dialog fragment must
+     * implement this interface in order to receive event callbacks.
+     * Each method passes the DialogFragment in case the host needs to query it. */
+    interface UsernameInterfaceListener {
+
+        fun onDialogPositiveClick(dialog: DialogFragment, newName: String)
+        fun onDialogNegativeClick(dialog: DialogFragment, newName: String)
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        // Verify that the host activity implements the callback interface
+        try {
+            // Instantiate the NoticeDialogListener so we can send events to the host
+            listener = context as UsernameInterfaceListener
+        } catch (e: ClassCastException) {
+            // The activity doesn't implement the interface, throw exception
+            throw ClassCastException(
+                (context.toString() +
+                        " must implement NoticeDialogListener")
+            )
+        }
+    }
+
+}
+
+
 
 
