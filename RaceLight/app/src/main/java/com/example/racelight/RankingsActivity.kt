@@ -3,6 +3,7 @@ package com.example.racelight
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.*
@@ -15,6 +16,7 @@ class RankingsActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.rankings_page)
+
         showRanksButton.setOnClickListener {
             readLocalData()
             pullData()
@@ -51,6 +53,7 @@ class RankingsActivity: AppCompatActivity() {
                 driverText.text = textFromLocal.toString()
             }
         }
+
 
         applicationContext.openFileOutput(fileName, Context.MODE_PRIVATE).use{
             it.write(("").toByteArray())
