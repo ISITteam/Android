@@ -57,8 +57,7 @@ class StartActivity : AppCompatActivity(), SensorEventListener,
     }
 
     override fun onSensorChanged(event: SensorEvent?) {
-
-
+        Countdown.visibility = View.VISIBLE
         if (kotlin.math.abs(event!!.values[0]) > shakeThreshold || kotlin.math.abs(event!!.values[1]) > shakeThreshold || kotlin.math.abs(
                 event!!.values[2]
             ) > shakeThreshold
@@ -76,9 +75,10 @@ class StartActivity : AppCompatActivity(), SensorEventListener,
                 }
                 sensorSwitch = true;
                 sendButton.visibility = View.VISIBLE
+                sendButton.isClickable = true;
+                //comment the two lines below to disable the Launch button
                 launchButton.visibility = View.VISIBLE
                 launchButton.isClickable = true;
-
             }
 
         }
@@ -102,25 +102,6 @@ class StartActivity : AppCompatActivity(), SensorEventListener,
 
         launchButton.setOnClickListener {
             startAnimation()
-
-
-            /*sensorSwitch = false;
-            launchButton.isClickable = false
-            launchButton.visibility = View.INVISIBLE
-            Countdown.visibility = View.VISIBLE
-            *//*countdown goes: 3,2,1,GO!*//*
-            object : CountDownTimer(3000, 1000) {
-                override fun onTick(millisUntilFinished: Long) {
-                    Countdown.text = "seconds remaining: " + ((millisUntilFinished / 1000) + 1)
-                }
-
-                override fun onFinish() {
-                    Countdown.text = "GO!"
-                    clickTime = System.currentTimeMillis()
-                    countdown = false
-                }
-
-            }.start()*/
         }
 
         backButton.setOnClickListener {
@@ -144,8 +125,20 @@ class StartActivity : AppCompatActivity(), SensorEventListener,
         sensorSwitch = false;
         launchButton.isClickable = false
         launchButton.visibility = View.INVISIBLE
-        Countdown.visibility = View.VISIBLE
+        sendButton.isClickable = false
+        sendButton.visibility = View.INVISIBLE
+
+        Countdown.visibility = View.INVISIBLE
+
         countdownThree.alpha = 1f
+        countdownThree.scaleX = 1f
+        countdownThree.scaleY = 1f
+        countdownTwo.scaleX = 1f
+        countdownTwo.scaleY = 1f
+        countdownOne.scaleX = 1f
+        countdownOne.scaleY = 1f
+        countdownGo.scaleX = 1f
+        countdownGo.scaleY = 1f
 
         val scaleX = PropertyValuesHolder.ofFloat(View.SCALE_X, .1f)
         val scaleY = PropertyValuesHolder.ofFloat(View.SCALE_Y, .1f)
@@ -257,9 +250,6 @@ class StartActivity : AppCompatActivity(), SensorEventListener,
             applicationContext.openFileOutput(fileName, Context.MODE_PRIVATE).use {
                 it.write(content.toByteArray())
             }
-            /*val textFromLocal: String = File(file).bufferedWriter().use{
-                out -> out.write(driverMessage(driverName, reactTime))
-            }*/
         } catch (e: Exception) {
 
         }

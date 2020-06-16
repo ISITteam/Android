@@ -9,6 +9,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.rankings_page.*
 import java.io.BufferedReader
+import java.io.File
 import java.io.InputStreamReader
 
 class RankingsActivity: AppCompatActivity() {
@@ -32,31 +33,21 @@ class RankingsActivity: AppCompatActivity() {
 
     private fun readLocalData(){
         val fileName = "driverText.txt"
-        /*val fileInput = applicationContext.openFileInput(fileName)
-        val bufferedReader = BufferedReader(InputStreamReader(fileInput))
-        val localStrBuilder = StringBuilder()
-        var text: String? = null
+        val file = baseContext.getFileStreamPath(fileName)
 
-        while({text = bufferedReader.readLine(); text}() != null){
-            localStrBuilder.append(text)
-        }
-        //val textFromLocal:String = applicationContext.openFileInput(fileName).read().toString(Charsets.UTF_8)
-        val textFromLocal = localStrBuilder.toString()
-        if(textFromLocal.isNotEmpty()){
-            driverText.text = textFromLocal
-        }*/
-        applicationContext.openFileInput(fileName).use { stream ->
-            val textFromLocal = stream.bufferedReader().use {
-                it.readText()
+        if(file.exists()){
+            applicationContext.openFileInput(fileName).use { stream ->
+                val textFromLocal = stream.bufferedReader().use {
+                    it.readText()
+                }
+                if(textFromLocal.isNotEmpty()){
+                    driverText.text = textFromLocal.toString()
+                }
             }
-            if(textFromLocal.isNotEmpty()){
-                driverText.text = textFromLocal.toString()
+
+            applicationContext.openFileOutput(fileName, Context.MODE_PRIVATE).use{
+                it.write(("").toByteArray())
             }
-        }
-
-
-        applicationContext.openFileOutput(fileName, Context.MODE_PRIVATE).use{
-            it.write(("").toByteArray())
         }
     }
 
