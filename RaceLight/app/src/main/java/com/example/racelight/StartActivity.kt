@@ -71,7 +71,7 @@ class StartActivity : AppCompatActivity(), SensorEventListener,
                     val remainder = difference % 1000
                     val seconds = difference / 1000
                     reactionTime = seconds.toString() + "." + remainder.toString()
-                    Countdown.text = "Reaction Time:" + reactionTime + " seconds"
+                    Countdown.text = "Reaction Time: " + reactionTime + " seconds"
                 }
                 sensorSwitch = true;
                 sendButton.visibility = View.VISIBLE
